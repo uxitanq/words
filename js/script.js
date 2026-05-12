@@ -1002,7 +1002,6 @@ function resetWordleGame(newWord = true) {
 
 function getDailyWord() {
     const today = new Date();
-    // We use the day of the year logic to ensure the word of the day is consistent for everyone on the same day.
     const startOfYear = new Date(today.getFullYear(), 0, 1);
     const diff = today.getTime() - startOfYear.getTime();
     const oneDay = 1000 * 60 * 60 * 24;
@@ -1095,9 +1094,8 @@ function speakWord() {
     utterance.rate = 0.8;
     
     const voices = speechSynthesis.getVoices();
-    // Try to find a Belarusian voice
     let belarusianVoice = voices.find(voice => voice.lang.includes('be') || voice.lang.includes('BY'));
-    // If not found, fall back to a Russian voice or default
+    // THIS LINE NEEDS TO BE CHANGED BECAUSE WTF
     if (!belarusianVoice) {
          belarusianVoice = voices.find(voice => voice.lang.includes('ru'));
     }
@@ -1149,7 +1147,6 @@ function shareWord() {
     }
 }
 
-// Add some animation effects
 document.addEventListener('DOMContentLoaded', function() {
     const observerOptions = {
         threshold: 0.1,

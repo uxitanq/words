@@ -12,117 +12,266 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/games.css">
-    <link rel="stylesheet" href="css/utilities.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <title>Беларускія словы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Беларускія словы - Слова дня, Wordle, Crosswordle</title>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1>Беларускія словы</h1>
-            <div class="header-controls">
-                <button id="theme-toggle" class="theme-toggle" aria-label="Пераключыць тэму">
-                    <span class="theme-icon">🌙</span>
-                </button>
-                <button id="sound-toggle" class="sound-toggle" aria-label="Пераключыць гук">
-                    <span class="sound-icon">🔊</span>
-                </button>
+    <!-- Welcome overlay for first-time visitors -->
+    <div id="welcome-overlay" class="welcome-overlay">
+        <div class="welcome-card">
+            <div class="welcome-icon">🇧🇾</div>
+            <h1 class="welcome-title">Беларускія словы</h1>
+            <p class="welcome-text">
+                Адкрыйце для сябе прыгажосць беларускай мовы праз штодзённыя словы і займальныя гульні
+            </p>
+            <div class="welcome-features">
+                <div class="welcome-feature">
+                    <span class="feature-icon">📚</span>
+                    <span>Слова дня</span>
+                </div>
+                <div class="welcome-feature">
+                    <span class="feature-icon">🎮</span>
+                    <span>Гульні</span>
+                </div>
+                <div class="welcome-feature">
+                    <span class="feature-icon">🧩</span>
+                    <span>Crosswordle</span>
+                </div>
             </div>
+            <button id="start-exploring" class="btn-primary btn-large">
+                Пачаць даследаванне
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </div>
-    </header>
+    </div>
 
-    <main class="content">
-        <section class="hero">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h2>Вітанкі!</h2>
-                </div>
-                <div class="hero-image">
-                    <img src="image/vitanki.jpg" alt="Беларускія вітанкі">
-                </div>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">Бел<span class="logo-accent">Словы</span></h1>
             </div>
-        </section>
+            
+            <div class="sidebar-nav">
+                <button class="nav-btn" data-tab="home">
+                    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/>
+                    </svg>
+                    <span>Галоўная</span>
+                </button>
+                
+                <button class="nav-btn active" data-tab="daily">
+                    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"/>
+                        <path d="M12 7v5l3 3"/>
+                    </svg>
+                    <span>Слова дня</span>
+                </button>
+                
+                <button class="nav-btn" data-tab="games">
+                    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="6" width="20" height="12" rx="2"/>
+                        <path d="M12 12h.01"/>
+                        <path d="M8 12h.01"/>
+                        <path d="M16 12h.01"/>
+                        <path d="M6 16h12"/>
+                    </svg>
+                    <span>Гульні</span>
+                </button>
+                
+                <button class="nav-btn" data-tab="about">
+                    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    <span>Аб праекце</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="theme-toggle" class="icon-btn" title="Змяніць тэму">
+                    <span class="icon">🌙</span>
+                </button>
+                <button id="sound-toggle" class="icon-btn" title="Гук">
+                    <span class="icon">🔊</span>
+                </button>
+                <button id="donate-btn" class="icon-btn" title="Падтрымаць">
+                    <span class="icon">💝</span>
+                </button>
+            </div>
+        </nav>
 
-        <section class="daily-word-section">
-            <div class="container">
-                <div class="word-card">
-                    <div class="word-header">
-                        <h3>Слова дня</h3>
-                        <span class="date" id="current-date"></span>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Tab -->
+            <section id="home-tab" class="tab-content">
+                <div class="home-container">
+                    <div class="home-hero">
+                        <div class="hero-icon">🇧🇾</div>
+                        <h1 class="hero-title">Беларускія словы</h1>
+                        <p class="hero-subtitle">Адкрыйце для сябе багацце беларускай мовы</p>
                     </div>
-                    <div class="word-content">
-                        <div class="word-display" id="daily-word"></div>
-                        <div class="word-details" id="word-details">
-                            <div class="pronunciation" id="word-pronunciation"></div>
-                            <div class="definition" id="word-definition"></div>
-                            <div class="example" id="word-example"></div>
+                    
+                    <div class="home-cards">
+                        <div class="home-card" onclick="document.querySelector('[data-tab=daily]').click()">
+                            <div class="home-card-icon">📚</div>
+                            <h3>Слова дня</h3>
+                            <p>Штодзень новае беларускае слова з вымаўленнем, азначэннем і прыкладам</p>
+                        </div>
+                        
+                        <div class="home-card" onclick="document.querySelector('[data-tab=games]').click()">
+                            <div class="home-card-icon">🎮</div>
+                            <h3>Гульні</h3>
+                            <p>Wordle, Crosswordle і Складальнік слоў для практыкі</p>
+                        </div>
+                        
+                        <div class="home-card" onclick="document.getElementById('crosswordle-btn').click()">
+                            <div class="home-card-icon">🧩</div>
+                            <h3>Crosswordle</h3>
+                            <p>Унікальны гібрыд крыжаванкі і Wordle з падказкамі</p>
                         </div>
                     </div>
-                    <div class="word-actions">
-                        <button id="speak-word" class="btn-secondary">Праслухаць</button>
-                        <button id="save-word" class="btn-secondary">Захаваць</button>
-                        <button id="share-word" class="btn-secondary">Падзяліцца</button>
+                    
+                    <div class="home-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">30</span>
+                            <span class="stat-label">Слоў у базе</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label">Гульні</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">112K+</span>
+                            <span class="stat-label">Слоў у слоўніку</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="previous-words">
-                    <h3>Апошнія словы</h3>
-                    <div class="words-list" id="previous-words-list"></div>
+            </section>
+            
+            <!-- Daily Word Tab -->
+            <section id="daily-tab" class="tab-content active">
+                <div class="daily-word-container">
+                    <div class="daily-word-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Слова дня</h2>
+                            <span class="date-badge" id="current-date"></span>
+                        </div>
+                        
+                        <div class="word-showcase">
+                            <div class="word-main" id="daily-word"></div>
+                        </div>
+                        
+                        <div class="word-info">
+                            <div class="info-row">
+                                <span class="info-label">Вымаўленне</span>
+                                <span class="info-value" id="word-pronunciation"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Азначэнне</span>
+                                <span class="info-value" id="word-definition"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Прыклад</span>
+                                <span class="info-value example-text" id="word-example"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="word-actions">
+                            <button id="speak-word" class="action-btn">
+                                <span>🔊</span>
+                                <span>Праслухаць</span>
+                            </button>
+                            <button id="save-word" class="action-btn">
+                                <span>💾</span>
+                                <span>Захаваць</span>
+                            </button>
+                            <button id="share-word" class="action-btn">
+                                <span>📤</span>
+                                <span>Падзяліцца</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="previous-words">
+                        <h3 class="section-title">Папярэднія словы</h3>
+                        <div class="words-grid" id="previous-words-list"></div>
+                    </div>
                 </div>
-            </div>
-        </section>
-
-        <section class="games-section">
-            <div class="container">
-                <h2>Гульні з беларускімі словамі</h2>
-                <div class="games-grid">
-                    <div class="game-card">
-                        <h4>Крыжыванка</h4>
-                        <p>Разгадайце крыжыванку з беларускімі словамі</p>
-                        <button class="btn-primary" id="crossword-btn">Гуляць</button>
-                    </div>
-                    <div class="game-card">
-                        <h4>Беларускі Wordle</h4>
-                        <p>Адгадайце беларускае слова за 6 спроб</p>
-                        <button class="btn-primary" id="wordle-btn">Гуляць</button>
-                    </div>
-                    <div class="game-card">
-                        <h4>Складальнік слоў</h4>
-                        <p>Складзіце словы з літар</p>
-                        <button class="btn-primary" id="word-builder-btn">Складаць</button>
+            </section>
+            
+            <!-- Games Tab -->
+            <section id="games-tab" class="tab-content">
+                <div class="games-container">
+                    <h2 class="section-title">Гульні са словамі</h2>
+                    <p class="section-subtitle">Развівайце свой слоўнікавы запас праз займальныя гульні</p>
+                    
+                    <div class="games-grid">
+                        <div class="game-card featured-game">
+                            <div class="game-card-badge">Новае</div>
+                            <div class="game-card-icon">🧩</div>
+                            <h3>Crosswordle</h3>
+                            <p>Унікальны гібрыд крыжаванкі і Wordle. Разгадайце словы па падказках з каляровай індыкацыяй літар!</p>
+                            <button class="btn-primary game-btn" id="crosswordle-btn">
+                                <span>Гуляць</span>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="game-card">
+                            <div class="game-card-icon">🎯</div>
+                            <h3>Беларускі Wordle</h3>
+                            <p>Адгадайце беларускае слова з 5 літар за 6 спроб. Кожная спроба дае падказкі колерам.</p>
+                            <button class="btn-primary game-btn" id="wordle-btn">
+                                <span>Гуляць</span>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="game-card">
+                            <div class="game-card-icon">🏗️</div>
+                            <h3>Складальнік слоў</h3>
+                            <p>Стварыце як мага больш слоў з літар прапанаванага слова. Развівайце крэатыўнасць!</p>
+                            <button class="btn-primary game-btn" id="word-builder-btn">
+                                <span>Гуляць</span>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+            
+            <!-- About Tab -->
+            <section id="about-tab" class="tab-content">
+                <div class="about-container">
+                    <h2 class="section-title">Аб праекце</h2>
+                    <div class="about-card">
+                        <p>Праект "Беларускія словы" створаны для папулярызацыі беларускай мовы праз інтэрактыўныя інструменты і гульні.</p>
+                        <p>Кожны дзень мы прапануем новае слова з тлумачэннем і прыкладам выкарыстання, а таксама займальныя гульні для практыкі.</p>
+                        <div class="credits">
+                            <p class="credit-text">Словы для гульняў узятыя з адкрытых крыніц, у тым ліку <a href="https://www.skarnik.by" target="_blank">skarnik.by</a></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Нашы сацыяльныя сеткі</h4>
-                <ul class="social-links">
-                    <li><a href="#" aria-label="Instagram">Instagram</a></li>
-                    <li><a href="#" aria-label="TikTok">TikTok</a></li>
-                    <li><a href="#" aria-label="Telegram">Telegram</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Падтрымаць стваральніцу</h4>
-                <button class="btn-donate" id="donate-btn">Зрабіць узнос</button>
-            </div>
-            <div class="footer-section">
-                <p>&copy; 2024 Беларускія словы. Усе правы абаронены.</p>
-                <p class="api-credit">Словы для Wordle з <a href="https://www.skarnik.by" target="_blank">skarnik.by</a></p>
-            </div>
-        </div>
-    </footer>
-
+    <!-- Modals -->
     <div id="donate-modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <button class="modal-close">&times;</button>
             <h3>Падтрымаць праект</h3>
             <p>Калі вам падабаецца гэты праект, вы можаце падтрымаць яго развіццё.</p>
             <div class="donate-options">
@@ -135,36 +284,33 @@
     </div>
 
     <div id="wordle-modal" class="modal">
-        <div class="modal-content wordle-modal">
-            <span class="close wordle-close">&times;</span>
-            <div class="wordle-header">
-                <h3>Беларускі Wordle</h3>
-                <div class="wordle-stats">
+        <div class="modal-content game-modal-content">
+            <button class="modal-close wordle-close">&times;</button>
+            <div class="game-modal-header">
+                <h3>🎯 Беларускі Wordle</h3>
+                <div class="game-stats">
                     <span>Спробы: <span id="attempts-count">0/6</span></span>
-                    <span class="wordle-loading" id="wordle-loading">Загрузка слоўніка...</span>
+                    <span class="loading-text" id="wordle-loading"></span>
                 </div>
             </div>
             
-            <div class="wordle-game">
-                <div class="wordle-grid" id="wordle-grid">
-                    </div>
+            <div class="game-area">
+                <div class="wordle-grid" id="wordle-grid"></div>
                 
-                <div class="wordle-message" id="wordle-message"></div>
-                <div class="wordle-target" id="wordle-target"></div>
+                <div id="wordle-message" class="game-message"></div>
+                <div id="wordle-target" class="game-target"></div>
                 
-                <div class="wordle-keyboard" id="wordle-keyboard">
-                    </div>
+                <div class="wordle-keyboard" id="wordle-keyboard"></div>
                 
-                <div class="wordle-controls">
+                <div class="game-controls">
                     <button id="wordle-submit" class="btn-primary">Праверыць</button>
                     <button id="wordle-reset" class="btn-secondary">Новая гульня</button>
                     <button id="wordle-hint" class="btn-secondary">Падказка</button>
                 </div>
             </div>
             
-            <div class="wordle-instructions">
+            <div class="game-instructions">
                 <h4>Як гуляць:</h4>
-                <p>Адгадайце беларускае слова з 5 літар. Колеры паказваюць:</p>
                 <div class="color-examples">
                     <div class="color-example">
                         <div class="color-box correct"></div>
@@ -172,58 +318,91 @@
                     </div>
                     <div class="color-example">
                         <div class="color-box present"></div>
-                        <span>Літара ёсць у слове, але не на гэтым месцы</span>
+                        <span>Літара ёсць у слове, але не тут</span>
                     </div>
                     <div class="color-example">
                         <div class="color-box absent"></div>
                         <span>Літары няма ў слове</span>
                     </div>
                 </div>
-                <p class="api-info">Словы для гульні загружаюцца з <a href="https://www.skarnik.by" target="_blank">skarnik.by</a></p>
             </div>
         </div>
     </div>
 
+<div id="crosswordle-modal" class="modal">
+    <div class="modal-content game-modal-content">
+        <button class="modal-close crosswordle-close">&times;</button>
+        <div class="game-modal-header">
+            <h3>🧩 Crosswordle</h3>
+            <div class="game-stats">
+                <span id="crosswordle-score">Правільна: 0/0 | Хады: 0</span>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div id="crosswordle-grid" class="crosswordle-grid"></div>
+            
+            <div id="crosswordle-clues" class="crosswordle-clues"></div>
+            
+            <div id="crosswordle-message" class="game-message"></div>
+            
+            <div class="game-controls">
+                <button id="crosswordle-hint" class="btn-secondary">Падказка (3)</button>
+                <button id="crosswordle-reset" class="btn-secondary">Новая гульня</button>
+            </div>
+        </div>
+        
+        <div class="game-instructions">
+            <h4>Як гуляць:</h4>
+            <p>Усе літары ўжо бачныя, але яны пераблытаныя! Клікайце на дзве літары, каб памяняць іх месцамі.</p>
+            <div class="color-examples">
+                <div class="color-example">
+                    <div class="color-box correct"></div>
+                    <span>Зялёны — літара на правільным месцы</span>
+                </div>
+                <div class="color-example">
+                    <div class="color-box present"></div>
+                    <span>Жоўты — літара ёсць у крыжаванцы, але не тут</span>
+                </div>
+                <div class="color-example">
+                    <div class="color-box absent"></div>
+                    <span>Шэры — такой літары няма ў крыжаванцы</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div id="word-builder-modal" class="modal">
-        <div class="modal-content wordle-modal">
-            <span class="close word-builder-close">&times;</span>
-            <div class="wordle-header">
-                <h3>Складальнік слоў</h3>
-                <div class="wordle-stats">
+        <div class="modal-content game-modal-content">
+            <button class="modal-close word-builder-close">&times;</button>
+            <div class="game-modal-header">
+                <h3>🏗️ Складальнік слоў</h3>
+                <div class="game-stats">
                     <span id="builder-score">Слоў: 0</span>
-                    <span id="builder-loading" class="wordle-loading">Загрузка поўнага слоўніка...</span>
+                    <span class="loading-text" id="builder-loading"></span>
                 </div>
             </div>
             
-            <div class="wordle-game">
-                <div class="builder-source-word-container">
-                    <div id="builder-source-word" class="source-word-display">
-                        </div>
-                </div>
-
-                <div class="builder-input-container">
-                    <input type="text" id="builder-input" placeholder="Увядзіце слова" maxlength="10" autofocus autocomplete="off">
+            <div class="game-area">
+                <div class="source-word-display" id="builder-source-word"></div>
+                
+                <div class="input-group">
+                    <input type="text" id="builder-input" placeholder="Увядзіце слова" maxlength="10" autocomplete="off">
                     <button id="builder-submit" class="btn-primary">Праверыць</button>
                 </div>
-
-                <div id="builder-message" class="wordle-message"></div>
-
-                <div class="builder-words-container">
+                
+                <div id="builder-message" class="game-message"></div>
+                
+                <div class="found-words-section">
                     <h4>Знойдзеныя словы:</h4>
-                    <ul id="builder-found-words">
-                        </ul>
+                    <ul id="builder-found-words" class="found-words-list"></ul>
                 </div>
                 
-                <div class="wordle-controls">
+                <div class="game-controls">
                     <button id="builder-new-game" class="btn-secondary">Новая гульня</button>
                     <button id="builder-show-unfound" class="btn-secondary">Нязнойдзеныя словы</button>
                 </div>
-            </div>
-
-            <div class="wordle-instructions">
-                <h4>Як гуляць:</h4>
-                <p>З літар, прадстаўленых уверсе, складзіце як мага больш слоў (гэта могуць быць назоўнкі, дзеясловы, формы дзеяслову, прыкметнікі, прыслоўі). Усе літары неабавязковыя.</p>
-                <p class="api-info">Словы для гульні загружаюцца з <a href="https://www.skarnik.by" target="_blank">skarnik.by</a></p>
             </div>
         </div>
     </div>
@@ -231,8 +410,8 @@
     <script src="js/data.js"></script>
     <script src="js/loader.js"></script>
     <script src="js/wordle.js"></script>
+    <script src="js/crosswordle.js"></script>
     <script src="js/wordbuilder.js"></script>
-    <script src="js/main.js"></script> 
+    <script src="js/main.js"></script>
 </body>
 </html>
-

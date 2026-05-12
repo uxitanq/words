@@ -1,39 +1,90 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
     setupEventListeners();
-    loadAndInitializeGames(); 
+    loadAndInitializeGames();
+    checkFirstVisit();
+    setupTabNavigation();
 });
 
-async function loadAndInitializeGames() {
-    wordleLoading.textContent = 'Загрузка словара 5 букв...';
-    await loadWordleWords();
-    wordleLoading.textContent = '';
-    initializeWordle(); 
+function checkFirstVisit() {
+    const hasVisited = localStorage.getItem('hasVisited');
+    const welcomeOverlay = document.getElementById('welcome-overlay');
+    
+    if (!hasVisited && welcomeOverlay) {
+        welcomeOverlay.style.display = 'flex';
+        const startBtn = document.getElementById('start-exploring');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                welcomeOverlay.style.display = 'none';
+                localStorage.setItem('hasVisited', 'true');
+            });
+        }
+    }
+}
 
-    builderLoading.textContent = 'Загрузка полного словаря...';
-    await loadFullDictionary(); 
-    builderLoading.textContent = '';
-    initializeWordBuilder(); 
+function setupTabNavigation() {
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    if (navButtons.length === 0 || tabContents.length === 0) {
+        console.warn('Tab navigation elements not found');
+        return;
+    }
+    
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetTab = this.getAttribute('data-tab');
+            
+            navButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            const targetElement = document.getElementById(`${targetTab}-tab`);
+            if (targetElement) {
+                targetElement.classList.add('active');
+            }
+        });
+    });
+}
+
+async function loadAndInitializeGames() {
+    const wordleLoading = document.getElementById('wordle-loading');
+    const builderLoading = document.getElementById('builder-loading');
+    
+    if (wordleLoading) wordleLoading.textContent = 'Загрузка...';
+    await loadWordleWords();
+    if (wordleLoading) wordleLoading.textContent = '';
+    if (typeof initializeWordle === 'function') initializeWordle();
+
+    if (builderLoading) builderLoading.textContent = 'Загрузка...';
+    await loadFullDictionary();
+    if (builderLoading) builderLoading.textContent = '';
+    if (typeof initializeWordBuilder === 'function') initializeWordBuilder();
+    if (typeof initializeCrosswordle === 'function') initializeCrosswordle();
 }
 
 function initializeApp() {
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-    currentDateElement.textContent = today.toLocaleDateString('be-BY', options);
+    const currentDateElement = document.getElementById('current-date');
+    if (currentDateElement) {
+        currentDateElement.textContent = today.toLocaleDateString('be-BY', options);
+    }
     
     const dailyWord = getDailyWord();
     displayWord(dailyWord);
-    
     displayPreviousWords();
     
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme); 
+        updateThemeIcon(savedTheme);
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
+        updateThemeIcon('light');
     }
     
     const savedSoundPreference = localStorage.getItem('soundEnabled');
@@ -41,116 +92,172 @@ function initializeApp() {
         soundEnabled = savedSoundPreference === 'true';
         updateSoundIcon();
     }
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    
-    const elementsToAnimate = document.querySelectorAll('.word-card, .game-card, .hero-content');
-    elementsToAnimate.forEach(el => {
-        el.style.opacity = 0;
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        observer.observe(el);
-    });
 }
 
 function setupEventListeners() {
-    themeToggle.addEventListener('click', toggleTheme);
-    soundToggle.addEventListener('click', toggleSound);
-    speakWordButton.addEventListener('click', speakWord);
-    saveWordButton.addEventListener('click', saveWord);
-    shareWordButton.addEventListener('click', shareWord);
+    // Theme toggle
+    const themeToggleEl = document.getElementById('theme-toggle');
+    if (themeToggleEl) {
+        themeToggleEl.addEventListener('click', toggleTheme);
+    }
     
-    donateButton.addEventListener('click', () => {
-        donateModal.style.display = 'block';
+    // Sound toggle
+    const soundToggleEl = document.getElementById('sound-toggle');
+    if (soundToggleEl) {
+        soundToggleEl.addEventListener('click', toggleSound);
+    }
+    
+    // Word actions
+    const speakBtn = document.getElementById('speak-word');
+    if (speakBtn) speakBtn.addEventListener('click', speakWord);
+    
+    const saveBtn = document.getElementById('save-word');
+    if (saveBtn) saveBtn.addEventListener('click', saveWord);
+    
+    const shareBtn = document.getElementById('share-word');
+    if (shareBtn) shareBtn.addEventListener('click', shareWord);
+    
+    // Donate modal
+    const donateModalEl = document.getElementById('donate-modal');
+    const donateBtnEl = document.getElementById('donate-btn');
+    if (donateBtnEl && donateModalEl) {
+        donateBtnEl.addEventListener('click', () => {
+            donateModalEl.style.display = 'block';
+        });
+    }
+    
+    // Game buttons - open modals
+    const crosswordleBtn = document.getElementById('crosswordle-btn');
+    const crosswordleModalEl = document.getElementById('crosswordle-modal');
+    if (crosswordleBtn && crosswordleModalEl) {
+        crosswordleBtn.addEventListener('click', () => {
+            crosswordleModalEl.style.display = 'block';
+            if (typeof startNewCrosswordleGame === 'function') {
+                startNewCrosswordleGame();
+            }
+        });
+    }
+    
+    const wordleBtn = document.getElementById('wordle-btn');
+    const wordleModalEl = document.getElementById('wordle-modal');
+    if (wordleBtn && wordleModalEl) {
+        wordleBtn.addEventListener('click', () => {
+            wordleModalEl.style.display = 'block';
+            if (typeof resetWordleGame === 'function') {
+                resetWordleGame(false);
+            }
+        });
+    }
+    
+    const wordBuilderBtn = document.getElementById('word-builder-btn');
+    const wordBuilderModalEl = document.getElementById('word-builder-modal');
+    if (wordBuilderBtn && wordBuilderModalEl) {
+        wordBuilderBtn.addEventListener('click', () => {
+            wordBuilderModalEl.style.display = 'block';
+            if (typeof startNewWordBuilderGame === 'function') {
+                startNewWordBuilderGame();
+            }
+        });
+    }
+    
+    // Modal close buttons
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) modal.style.display = 'none';
+        });
     });
     
-    closeModal.addEventListener('click', () => {
-        donateModal.style.display = 'none';
-    });
-    
-    crosswordButton.addEventListener('click', () => {
-        alert('Крыжыванка будзе даступная з 1 кастрычніка 2024 года!');
-    });
-    
-    wordleButton.addEventListener('click', () => {
-        wordleModal.style.display = 'block';
-        if (wordleGameState.gameOver || wordleGameState.attempts === 0) {
-             resetWordleGame(false); 
-        }
-    });
-    
-    wordBuilderButton.addEventListener('click', () => {
-        wordBuilderModal.style.display = 'block';
-        if (!builderGameState.sourceWord || builderGameState.gameOver) {
-             startNewWordBuilderGame();
-        }
-    });
-
+    // Close modals on outside click
     window.addEventListener('click', (event) => {
-        if (event.target === donateModal) {
-            donateModal.style.display = 'none';
-        }
-        if (event.target === wordleModal) {
-            wordleModal.style.display = 'none';
-        }
-        if (event.target === wordBuilderModal) {
-            wordBuilderModal.style.display = 'none';
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
         }
     });
     
-    document.querySelector('.wordle-close').addEventListener('click', () => {
-        wordleModal.style.display = 'none';
-    });
-
-    builderCloseModal.addEventListener('click', () => {
-        wordBuilderModal.style.display = 'none';
-    });
-
-    const donateOptions = document.querySelectorAll('.donate-option');
-    donateOptions.forEach(option => {
+    // Donate options
+    document.querySelectorAll('.donate-option').forEach(option => {
         option.addEventListener('click', function() {
             if (this.textContent === 'Іншая сума') {
                 const amount = prompt('Увядзіце суму ў BYN:');
                 if (amount && !isNaN(amount)) {
                     alert(`Дзякуй за падтрымку! Сумa: ${amount} BYN`);
-                    donateModal.style.display = 'none';
+                    if (donateModalEl) donateModalEl.style.display = 'none';
                 }
             } else {
                 alert(`Дзякуй за падтрымку! ${this.textContent}`);
-                donateModal.style.display = 'none';
+                if (donateModalEl) donateModalEl.style.display = 'none';
             }
         });
     });
-    wordleKeyboard.addEventListener('click', (e) => {
-        if (e.target.classList.contains('keyboard-key')) {
-            handleWordleKeyPress(e.target.dataset.key); 
-        }
-    });
-
-    wordleSubmit.addEventListener('click', submitWordleGuess);
-    wordleReset.addEventListener('click', () => resetWordleGame(true));
-    wordleHint.addEventListener('click', giveWordleHint);
-
-    builderSubmit.addEventListener('click', submitBuilderGuess);
-    builderNewGameButton.addEventListener('click', startNewWordBuilderGame);
-    builderShowUnfoundButton.addEventListener('click', showUnfoundWords); 
-    builderInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            submitBuilderGuess();
-        }
-    });
+    
+    // Wordle keyboard clicks (виртуальная клавиатура)
+    const wordleKeyboardEl = document.getElementById('wordle-keyboard');
+    if (wordleKeyboardEl) {
+        wordleKeyboardEl.addEventListener('click', (e) => {
+            if (e.target.classList.contains('keyboard-key')) {
+                const key = e.target.dataset.key;
+                if (key && typeof handleWordleKeyPress === 'function') {
+                    handleWordleKeyPress(key);
+                }
+            }
+        });
+    }
+    
+    // Wordle control buttons
+    const wordleSubmitBtn = document.getElementById('wordle-submit');
+    if (wordleSubmitBtn && typeof submitWordleGuess === 'function') {
+        wordleSubmitBtn.addEventListener('click', submitWordleGuess);
+    }
+    
+    const wordleResetBtn = document.getElementById('wordle-reset');
+    if (wordleResetBtn && typeof resetWordleGame === 'function') {
+        wordleResetBtn.addEventListener('click', () => resetWordleGame(true));
+    }
+    
+    const wordleHintBtn = document.getElementById('wordle-hint');
+    if (wordleHintBtn && typeof giveWordleHint === 'function') {
+        wordleHintBtn.addEventListener('click', giveWordleHint);
+    }
+    
+    // Crosswordle controls
+    const crosswordleHintBtn = document.getElementById('crosswordle-hint');
+    if (crosswordleHintBtn && typeof giveCrosswordleHint === 'function') {
+        crosswordleHintBtn.addEventListener('click', giveCrosswordleHint);
+    }
+    
+    const crosswordleResetBtn = document.getElementById('crosswordle-reset');
+    if (crosswordleResetBtn && typeof resetCrosswordleGame === 'function') {
+        crosswordleResetBtn.addEventListener('click', resetCrosswordleGame);
+    }
+    
+    // Word Builder controls
+    const builderSubmitBtn = document.getElementById('builder-submit');
+    if (builderSubmitBtn && typeof submitBuilderGuess === 'function') {
+        builderSubmitBtn.addEventListener('click', submitBuilderGuess);
+    }
+    
+    const builderNewGameBtn = document.getElementById('builder-new-game');
+    if (builderNewGameBtn && typeof startNewWordBuilderGame === 'function') {
+        builderNewGameBtn.addEventListener('click', startNewWordBuilderGame);
+    }
+    
+    const builderShowUnfoundBtn = document.getElementById('builder-show-unfound');
+    if (builderShowUnfoundBtn && typeof showUnfoundWords === 'function') {
+        builderShowUnfoundBtn.addEventListener('click', showUnfoundWords);
+    }
+    
+    const builderInputEl = document.getElementById('builder-input');
+    if (builderInputEl && typeof submitBuilderGuess === 'function') {
+        builderInputEl.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                submitBuilderGuess();
+            }
+        });
+    }
+    
+    // ВАЖНО: Не добавляем глобальный keydown для Wordle здесь!
+    // Wordle сам управляет своими клавишами через wordle.js
 }
 
 function getDailyWord() {
@@ -165,15 +272,23 @@ function getDailyWord() {
 }
 
 function displayWord(wordData) {
-    dailyWordElement.textContent = wordData.word;
-    wordPronunciationElement.textContent = `Вымаўленне: ${wordData.pronunciation}`;
-    wordDefinitionElement.textContent = wordData.definition;
-    wordExampleElement.textContent = `Прыклад: "${wordData.example}"`;
+    const dwEl = document.getElementById('daily-word');
+    const wpEl = document.getElementById('word-pronunciation');
+    const wdEl = document.getElementById('word-definition');
+    const weEl = document.getElementById('word-example');
+    
+    if (dwEl) dwEl.textContent = wordData.word;
+    if (wpEl) wpEl.textContent = wordData.pronunciation;
+    if (wdEl) wdEl.textContent = wordData.definition;
+    if (weEl) weEl.textContent = `"${wordData.example}"`;
 }
 
 function displayPreviousWords() {
+    const pwEl = document.getElementById('previous-words-list');
+    if (!pwEl) return;
+    
     const today = new Date();
-    const previousWords = [];
+    pwEl.innerHTML = '';
     
     for (let i = 1; i <= 5; i++) {
         const date = new Date(today);
@@ -187,31 +302,21 @@ function displayPreviousWords() {
         const wordIndex = dayOfYear % wordsDatabase.length;
         const wordData = wordsDatabase[wordIndex];
         
-        previousWords.push({
-            word: wordData.word,
-            date: date.toLocaleDateString('be-BY')
-        });
-    }
-    
-    previousWordsListElement.innerHTML = '';
-    previousWords.forEach(word => {
         const wordItem = document.createElement('div');
-        wordItem.className = 'word-item';
+        wordItem.className = 'word-item-card';
         wordItem.innerHTML = `
-            <div class="word">${word.word}</div>
-            <div class="date">${word.date}</div>
+            <div class="word">${wordData.word}</div>
+            <div class="date">${date.toLocaleDateString('be-BY')}</div>
         `;
         
         wordItem.addEventListener('click', () => {
-            const wordData = wordsDatabase.find(item => item.word === word.word);
-            if (wordData) {
-                displayWord(wordData);
-                document.querySelector('.daily-word-section').scrollIntoView({ behavior: 'smooth' });
-            }
+            displayWord(wordData);
+            const dwCard = document.querySelector('.daily-word-card');
+            if (dwCard) dwCard.scrollIntoView({ behavior: 'smooth' });
         });
         
-        previousWordsListElement.appendChild(wordItem);
-    });
+        pwEl.appendChild(wordItem);
+    }
 }
 
 function toggleTheme() {
@@ -223,8 +328,10 @@ function toggleTheme() {
 }
 
 function updateThemeIcon(theme) {
-    const themeIcon = document.querySelector('.theme-icon');
-    themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    const icon = document.querySelector('#theme-toggle .icon');
+    if (icon) {
+        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
 }
 
 function toggleSound() {
@@ -234,67 +341,72 @@ function toggleSound() {
 }
 
 function updateSoundIcon() {
-    const soundIcon = document.querySelector('.sound-icon');
-    soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+    const icon = document.querySelector('#sound-toggle .icon');
+    if (icon) {
+        icon.textContent = soundEnabled ? '🔊' : '🔇';
+    }
 }
 
 function speakWord() {
     if (!soundEnabled) return;
     
-    const word = dailyWordElement.textContent;
+    const word = document.getElementById('daily-word')?.textContent;
+    if (!word) return;
+    
     const utterance = new SpeechSynthesisUtterance(word);
     utterance.lang = 'be-BY';
     utterance.rate = 0.8;
     
     const voices = speechSynthesis.getVoices();
-    let belarusianVoice = voices.find(voice => voice.lang.includes('be') || voice.lang.includes('BY'));
-    if (!belarusianVoice) {
-         belarusianVoice = voices.find(voice => voice.lang.includes('ru'));
-    }
-
-    if (belarusianVoice) {
-        utterance.voice = belarusianVoice;
-    }
+    const belarusianVoice = voices.find(v => v.lang.includes('be') || v.lang.includes('BY')) 
+                         || voices.find(v => v.lang.includes('ru'));
     
+    if (belarusianVoice) utterance.voice = belarusianVoice;
     speechSynthesis.speak(utterance);
 }
 
 function saveWord() {
-    const word = dailyWordElement.textContent;
+    const word = document.getElementById('daily-word')?.textContent;
+    if (!word) return;
     
     if (!savedWords.includes(word)) {
         savedWords.push(word);
         localStorage.setItem('savedWords', JSON.stringify(savedWords));
-        saveWordButton.textContent = 'Захавана!';
-        saveWordButton.style.backgroundColor = '#28a745';
-        saveWordButton.style.borderColor = '#28a745';
-        saveWordButton.style.color = 'white';
-        setTimeout(() => {
-            saveWordButton.textContent = 'Захаваць';
-            saveWordButton.style.backgroundColor = '';
-            saveWordButton.style.borderColor = 'var(--primary-color)';
-            saveWordButton.style.color = 'var(--primary-color)';
-        }, 2000);
+        
+        const btn = document.getElementById('save-word');
+        if (btn) {
+            btn.innerHTML = '<span>✅</span><span>Захавана!</span>';
+            setTimeout(() => {
+                btn.innerHTML = '<span>💾</span><span>Захаваць</span>';
+            }, 2000);
+        }
     } else {
         alert('Гэта слова ўжо захавана!');
     }
 }
 
 function shareWord() {
-    const word = dailyWordElement.textContent;
-    const definition = wordDefinitionElement.textContent;
-    const example = wordExampleElement.textContent;
+    const word = document.getElementById('daily-word')?.textContent;
+    const definition = document.getElementById('word-definition')?.textContent;
+    const example = document.getElementById('word-example')?.textContent;
     
-    const shareText = `Слова дня: ${word}\n\n${definition}\n\n${example}\n\nДаведайцеся больш на belwords.by`;
+    if (!word) return;
+    
+    const shareText = `Слова дня: ${word}\n\nАзначэнне: ${definition}\n\nПрыклад: ${example}\n\nДаведайцеся больш на belwords.by`;
     
     if (navigator.share) {
         navigator.share({
             title: 'Беларускае слова дня',
             text: shareText,
             url: window.location.href
-        });
+        }).catch(() => copyToClipboard(shareText));
     } else {
-        navigator.clipboard.writeText(shareText)
-            .then(() => alert('Слова скапіявана ў буфер абмену!'));
+        copyToClipboard(shareText);
     }
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => alert('Тэкст скапіяваны ў буфер абмену!'))
+        .catch(() => alert('Не ўдалося скапіяваць.'));
 }
