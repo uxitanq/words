@@ -36,6 +36,8 @@ function setupTabNavigation() {
             e.preventDefault();
             const targetTab = this.getAttribute('data-tab');
             
+            if (!targetTab) return;
+            
             navButtons.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
@@ -78,14 +80,9 @@ function initializeApp() {
     displayWord(dailyWord);
     displayPreviousWords();
     
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme);
-    } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        updateThemeIcon('light');
-    }
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
     
     const savedSoundPreference = localStorage.getItem('soundEnabled');
     if (savedSoundPreference !== null) {
@@ -255,9 +252,6 @@ function setupEventListeners() {
             }
         });
     }
-    
-    // ВАЖНО: Не добавляем глобальный keydown для Wordle здесь!
-    // Wordle сам управляет своими клавишами через wordle.js
 }
 
 function getDailyWord() {
@@ -328,10 +322,22 @@ function toggleTheme() {
 }
 
 function updateThemeIcon(theme) {
-    const icon = document.querySelector('#theme-toggle .icon');
-    if (icon) {
-        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    // Ищем иконку внутри кнопки theme-toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (!themeToggleBtn) return;
+    
+    // Ищем span с классом icon внутри кнопки
+    const icon = themeToggleBtn.querySelector('.icon');
+    if (!icon) {
+        // Если нет .icon, ищем любой span
+        const span = themeToggleBtn.querySelector('span');
+        if (span) {
+            span.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        return;
     }
+    
+    icon.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
 function toggleSound() {
@@ -341,10 +347,20 @@ function toggleSound() {
 }
 
 function updateSoundIcon() {
-    const icon = document.querySelector('#sound-toggle .icon');
-    if (icon) {
-        icon.textContent = soundEnabled ? '🔊' : '🔇';
+    // Ищем иконку внутри кнопки sound-toggle
+    const soundToggleBtn = document.getElementById('sound-toggle');
+    if (!soundToggleBtn) return;
+    
+    const icon = soundToggleBtn.querySelector('.icon');
+    if (!icon) {
+        const span = soundToggleBtn.querySelector('span');
+        if (span) {
+            span.textContent = soundEnabled ? '🔊' : '🔇';
+        }
+        return;
     }
+    
+    icon.textContent = soundEnabled ? '🔊' : '🔇';
 }
 
 function speakWord() {
