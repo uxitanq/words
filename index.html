@@ -57,14 +57,14 @@
             </div>
             
             <div class="sidebar-nav">
-                <button class="nav-btn" data-tab="home">
+                <button class="nav-btn active" data-tab="home">
                     <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/>
                     </svg>
                     <span>Галоўная</span>
                 </button>
                 
-                <button class="nav-btn active" data-tab="daily">
+                <button class="nav-btn" data-tab="daily">
                     <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"/>
                         <path d="M12 7v5l3 3"/>
@@ -108,11 +108,10 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Home Tab -->
-            <section id="home-tab" class="tab-content">
+            <!-- Home Tab - АКТИВНА ПО УМОЛЧАНИЮ -->
+            <section id="home-tab" class="tab-content active">
                 <div class="home-container">
                     <div class="home-hero">
-                        <div class="hero-icon">🇧🇾</div>
                         <h1 class="hero-title">Беларускія словы</h1>
                         <p class="hero-subtitle">Адкрыйце для сябе багацце беларускай мовы</p>
                     </div>
@@ -155,7 +154,7 @@
             </section>
             
             <!-- Daily Word Tab -->
-            <section id="daily-tab" class="tab-content active">
+            <section id="daily-tab" class="tab-content">
                 <div class="daily-word-container">
                     <div class="daily-word-card">
                         <div class="card-header">
@@ -268,7 +267,7 @@
         </main>
     </div>
 
-    <!-- Modals -->
+    <!-- Donate Modal -->
     <div id="donate-modal" class="modal">
         <div class="modal-content">
             <button class="modal-close">&times;</button>
@@ -283,6 +282,7 @@
         </div>
     </div>
 
+    <!-- Wordle Modal -->
     <div id="wordle-modal" class="modal">
         <div class="modal-content game-modal-content">
             <button class="modal-close wordle-close">&times;</button>
@@ -329,50 +329,52 @@
         </div>
     </div>
 
-<div id="crosswordle-modal" class="modal">
-    <div class="modal-content game-modal-content">
-        <button class="modal-close crosswordle-close">&times;</button>
-        <div class="game-modal-header">
-            <h3>🧩 Crosswordle</h3>
-            <div class="game-stats">
-                <span id="crosswordle-score">Правільна: 0/0 | Хады: 0</span>
-            </div>
-        </div>
-        
-        <div class="game-area">
-            <div id="crosswordle-grid" class="crosswordle-grid"></div>
-            
-            <div id="crosswordle-clues" class="crosswordle-clues"></div>
-            
-            <div id="crosswordle-message" class="game-message"></div>
-            
-            <div class="game-controls">
-                <button id="crosswordle-hint" class="btn-secondary">Падказка (3)</button>
-                <button id="crosswordle-reset" class="btn-secondary">Новая гульня</button>
-            </div>
-        </div>
-        
-        <div class="game-instructions">
-            <h4>Як гуляць:</h4>
-            <p>Усе літары ўжо бачныя, але яны пераблытаныя! Клікайце на дзве літары, каб памяняць іх месцамі.</p>
-            <div class="color-examples">
-                <div class="color-example">
-                    <div class="color-box correct"></div>
-                    <span>Зялёны — літара на правільным месцы</span>
+    <!-- Crosswordle Modal -->
+    <div id="crosswordle-modal" class="modal">
+        <div class="modal-content game-modal-content">
+            <button class="modal-close crosswordle-close">&times;</button>
+            <div class="game-modal-header">
+                <h3>🧩 Crosswordle</h3>
+                <div class="game-stats">
+                    <span id="crosswordle-score">Правільна: 0/0 | Хады: 0</span>
                 </div>
-                <div class="color-example">
-                    <div class="color-box present"></div>
-                    <span>Жоўты — літара ёсць у крыжаванцы, але не тут</span>
+            </div>
+            
+            <div class="game-area">
+                <div id="crosswordle-grid" class="crosswordle-grid"></div>
+                
+                <div id="crosswordle-clues" class="crosswordle-clues"></div>
+                
+                <div id="crosswordle-message" class="game-message"></div>
+                
+                <div class="game-controls">
+                    <button id="crosswordle-hint" class="btn-secondary">Падказка (3)</button>
+                    <button id="crosswordle-reset" class="btn-secondary">Новая гульня</button>
                 </div>
-                <div class="color-example">
-                    <div class="color-box absent"></div>
-                    <span>Шэры — такой літары няма ў крыжаванцы</span>
+            </div>
+            
+            <div class="game-instructions">
+                <h4>Як гуляць:</h4>
+                <p>Усе літары ўжо бачныя, але яны пераблытаныя! Клікайце на дзве літары, каб памяняць іх месцамі.</p>
+                <div class="color-examples">
+                    <div class="color-example">
+                        <div class="color-box correct"></div>
+                        <span>Зялёны — літара на правільным месцы</span>
+                    </div>
+                    <div class="color-example">
+                        <div class="color-box present"></div>
+                        <span>Жоўты — літара ёсць у крыжаванцы, але не тут</span>
+                    </div>
+                    <div class="color-example">
+                        <div class="color-box absent"></div>
+                        <span>Шэры — такой літары няма ў крыжаванцы</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
+    <!-- Word Builder Modal -->
     <div id="word-builder-modal" class="modal">
         <div class="modal-content game-modal-content">
             <button class="modal-close word-builder-close">&times;</button>

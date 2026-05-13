@@ -17,6 +17,19 @@ function checkFirstVisit() {
             startBtn.addEventListener('click', () => {
                 welcomeOverlay.style.display = 'none';
                 localStorage.setItem('hasVisited', 'true');
+                
+                const navButtons = document.querySelectorAll('.nav-btn');
+                const tabContents = document.querySelectorAll('.tab-content');
+                
+                navButtons.forEach(b => b.classList.remove('active'));
+                
+                const homeBtn = document.querySelector('[data-tab="home"]');
+                if (homeBtn) homeBtn.classList.add('active');
+                
+                tabContents.forEach(tab => tab.classList.remove('active'));
+                
+                const homeTab = document.getElementById('home-tab');
+                if (homeTab) homeTab.classList.add('active');
             });
         }
     }
